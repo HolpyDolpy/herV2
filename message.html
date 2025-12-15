@@ -13,6 +13,7 @@
 
         body {
             font-family: 'Arial', sans-serif;
+            /* Use the original background image for this page */
             background-image: url('background.jpg');
             background-size: cover;
             background-position: center;
@@ -25,7 +26,7 @@
             justify-content: center;
         }
 
-        .game-screen, .message-screen {
+        .game-screen {
             background: rgba(0, 0, 0, 0.5);
             padding: 40px;
             border-radius: 15px;
@@ -33,10 +34,7 @@
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
             max-width: 90%;
             z-index: 10;
-            position: relative; /* Needed for absolute positioning of video/gif */
-        }
-
-        .game-screen {
+            position: relative;
             text-align: center;
         }
 
@@ -47,11 +45,18 @@
             letter-spacing: 3px;
         }
 
+        /* Video is initially hidden */
         .video-container {
+            display: none;
             margin: 20px 0;
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Show video when the game is complete */
+        .video-container.show {
+            display: block;
         }
 
         video {
@@ -98,10 +103,17 @@
             margin-top: 20px;
         }
 
+        /* Message screen is initially hidden */
         .message-screen {
             display: none;
             text-align: center;
             max-width: 800px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
         }
 
         .message-title {
@@ -165,7 +177,7 @@
 </head>
 <body>
     <!-- Background Music -->
-    <audio id="backgroundMusic" loop preload="auto">
+    <audio id="backgroundMusic" preload="auto">
         <source src="background_music.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
@@ -173,8 +185,8 @@
     <div class="game-screen" id="gameScreen">
         <h1 class="game-title">Find the hearts for Angel</h1>
         
-        <div class="video-container">
-            <video id="longVideo" controls autoplay loop muted>
+        <div class="video-container" id="videoContainer">
+            <video id="longVideo" controls muted>
                 <source src="video_long_compressed.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
@@ -209,10 +221,23 @@
         const heartContainer = document.getElementById('heartContainer');
         const gameScreen = document.getElementById('gameScreen');
         const messageScreen = document.getElementById('messageScreen');
+        const videoContainer = document.getElementById('videoContainer');
         const longVideo = document.getElementById('longVideo');
+        const music = document.getElementById('backgroundMusic');
         
         const heartEmojis = ['🤍', '🩶', '🤍', '🩶', '🤍'];
         let clickedCount = 0;
+
+        // Set up the video to transition to the message screen when it ends
+        longVideo.onended = function() {
+            // Stop the music when the video ends
+            music.pause();
+            music.currentTime = 0;
+
+            // Hide the game screen and show the message screen
+            gameScreen.style.display = 'none';
+            messageScreen.style.display = 'block';
+        };
 
         heartEmojis.forEach((emoji, index) => {
             const heart = document.createElement('div');
@@ -225,22 +250,23 @@
                     this.classList.add('clicked');
                     clickedCount++;
                     
-                    // Attempt to play music on first click
-                    if (clickedCount === 1) {
-                        const music = document.getElementById('backgroundMusic');
-                        music.volume = 0.5;
-                        music.play().catch(e => console.log("Autoplay blocked:", e));
-                    }
-
                     if (clickedCount === heartEmojis.length) {
-                        // Stop the video when the message is revealed
-                        longVideo.pause();
-                        longVideo.currentTime = 0;
+                        // Game complete:
+                        
+                        // 1. Hide the heart game elements
+                        heartContainer.style.display = 'none';
+                        document.querySelector('.instruction').style.display = 'none';
+                        document.querySelector('.game-title').style.display = 'none';
 
-                        setTimeout(() => {
-                            gameScreen.style.display = 'none';
-                            messageScreen.style.display = 'block';
-                        }, 500);
+                        // 2. Show the video container and play the video (unmuted)
+                        videoContainer.classList.add('show');
+                        longVideo.muted = false;
+                        longVideo.play().catch(e => console.log("Video autoplay blocked:", e));
+
+                        // 3. Start the music
+                        music.volume = 0.5;
+                        music.loop = true;
+                        music.play().catch(e => console.log("Music autoplay blocked:", e));
                     }
                 }
             });
