@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Question for Angel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #8b9dc3;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: #6e7681;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+        }
+
+        .video-container {
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        video {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .question {
+            font-size: 1.5rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #a5b4cb;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #6e7681;
+            border-radius: 5px;
+            background: rgba(22, 27, 34, 0.8);
+            color: #fff;
+            font-size: 1rem;
+            text-align: center;
+            width: 200px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #8b9dc3;
+            color: #0d1117;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #a5b4cb;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #ff6b6b;
+        }
+
+        #nextLink {
+            display: none;
+            margin-top: 30px;
+        }
+
+        #nextLink a {
+            text-decoration: none;
+            padding: 15px 30px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            transition: background 0.3s;
+        }
+
+        #nextLink a:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">A Message from a Friend</h1>
+        
+        <div class="video-container">
+            <video id="shortVideo" controls autoplay loop muted>
+                <source src="video_short.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <p class="question">What is the special day?</p>
+        
+        <div class="input-group">
+            <input type="text" id="dateInput" placeholder="e.g., December 18">
+            <button onclick="checkDate()">Unlock</button>
+        </div>
+
+        <p id="result"></p>
+
+        <div id="nextLink">
+            <a href="message.html">Click to Continue Your Journey</a>
+        </div>
+    </div>
+
+    <script>
+        function checkDate() {
+            const input = document.getElementById('dateInput').value.trim().toLowerCase();
+            const result = document.getElementById('result');
+            const nextLink = document.getElementById('nextLink');
+            
+            // Check for December 18, 18 December, or 18th
+            const correctDate = /december\s*18|18\s*december|18th/i;
+
+            if (correctDate.test(input)) {
+                result.textContent = "Correct! The path is open.";
+                result.style.color = "#4CAF50";
+                nextLink.style.display = 'block';
+            } else {
+                result.textContent = "Incorrect. Try again.";
+                result.style.color = "#ff6b6b";
+                nextLink.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
