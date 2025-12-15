@@ -13,11 +13,8 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background-image: url('background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #8b9dc3;
+            background-color: #000; /* Fallback color */
+            color: #fff;
             overflow: hidden;
             height: 100vh;
             display: flex;
@@ -25,80 +22,99 @@
             justify-content: center;
         }
 
+        /* Full-screen video background styles */
+        #video-background {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            background-size: cover;
+            pointer-events: none; /* Make it unclickable */
+        }
+
+        /* Overlay for better text readability */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -99;
+        }
+
         .container {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 40px;
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-            max-width: 90%;
+            background: rgba(255, 255, 255, 0.1); /* Semi-transparent white box */
+            padding: 50px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 450px;
             text-align: center;
             z-index: 10;
+            transition: all 0.5s ease;
         }
 
         .title {
             font-size: 2.5rem;
-            color: #6e7681;
-            margin-bottom: 20px;
-            letter-spacing: 3px;
-        }
-
-        .video-container {
-            margin: 20px 0;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-        }
-
-        video {
-            max-width: 100%;
-            height: auto;
-            display: block;
+            color: #fff;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         }
 
         .question {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             margin-top: 30px;
-            margin-bottom: 15px;
-            color: #a5b4cb;
+            margin-bottom: 20px;
+            color: #e0e0e0;
         }
 
         .input-group {
             display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
 
         input[type="text"] {
-            padding: 10px;
-            border: 1px solid #6e7681;
-            border-radius: 5px;
-            background: rgba(22, 27, 34, 0.8);
-            color: #fff;
-            font-size: 1rem;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 1.1rem;
             text-align: center;
-            width: 200px;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         button {
-            padding: 10px 20px;
+            padding: 12px 30px;
             border: none;
-            border-radius: 5px;
-            background: #8b9dc3;
-            color: #0d1117;
-            font-size: 1rem;
+            border-radius: 8px;
+            background: #4CAF50;
+            color: white;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.3s, transform 0.1s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
         button:hover {
-            background: #a5b4cb;
+            background: #45a049;
+            transform: translateY(-1px);
         }
 
         #result {
             margin-top: 20px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: #ff6b6b;
         }
 
@@ -115,6 +131,7 @@
             border-radius: 8px;
             font-size: 1.5rem;
             transition: background 0.3s;
+            display: inline-block;
         }
 
         #nextLink a:hover {
@@ -123,16 +140,15 @@
     </style>
 </head>
 <body>
+    <video autoplay loop muted playsinline id="video-background">
+        <source src="video_short.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="overlay"></div>
+
     <div class="container">
         <h1 class="title">A Message from a Friend</h1>
         
-        <div class="video-container">
-            <video id="shortVideo" controls autoplay loop muted>
-                <source src="video_short.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        </div>
-
         <p class="question">What is the special day?</p>
         
         <div class="input-group">
@@ -153,7 +169,6 @@
             const result = document.getElementById('result');
             const nextLink = document.getElementById('nextLink');
             
-            // Check for December 18, 18 December, or 18th
             const correctDate = /december\s*18|18\s*december|18th/i;
 
             if (correctDate.test(input)) {
