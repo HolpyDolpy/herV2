@@ -36,6 +36,7 @@
             z-index: 10;
             position: relative;
             text-align: center;
+            transition: opacity 0.5s ease;
         }
 
         .game-title {
@@ -45,13 +46,16 @@
             letter-spacing: 3px;
         }
 
-        /* Video is initially hidden */
+        /* Video is initially hidden and will be full-screen when shown */
         .video-container {
             display: none;
-            margin: 20px 0;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100; /* Above everything else */
+            background-color: black;
         }
 
         /* Show video when the game is complete */
@@ -60,8 +64,9 @@
         }
 
         video {
-            max-width: 100%;
-            height: auto;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures video covers the entire screen */
             display: block;
         }
 
@@ -114,6 +119,7 @@
             backdrop-filter: blur(5px);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
             position: relative;
+            z-index: 10;
         }
 
         .message-title {
@@ -185,15 +191,16 @@
     <div class="game-screen" id="gameScreen">
         <h1 class="game-title">Find the hearts for Angel</h1>
         
-        <div class="video-container" id="videoContainer">
-            <video id="longVideo" controls muted>
-                <source src="video_long_compressed.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        </div>
-
         <div class="heart-container" id="heartContainer"></div>
         <p class="instruction">Click all 5 hearts to reveal your message</p>
+    </div>
+
+    <!-- Full-screen video container -->
+    <div class="video-container" id="videoContainer">
+        <video id="longVideo" muted disablePictureInPicture controlsList="nodownload nofullscreen noremoteplayback">
+            <source src="video_long_compressed.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
     </div>
 
     <div class="message-screen" id="messageScreen">
@@ -234,9 +241,12 @@
             music.pause();
             music.currentTime = 0;
 
-            // Hide the game screen and show the message screen
-            gameScreen.style.display = 'none';
-            messageScreen.style.display = 'block';
+            // Hide the video container and show the message screen
+            videoContainer.style.display = 'none';
+            messageScreen.style.display = 'flex';
+            messageScreen.style.flexDirection = 'column';
+            messageScreen.style.justifyContent = 'center';
+            messageScreen.style.alignItems = 'center';
         };
 
         heartEmojis.forEach((emoji, index) => {
@@ -253,12 +263,13 @@
                     if (clickedCount === heartEmojis.length) {
                         // Game complete:
                         
-                        // 1. Hide the heart game elements
-                        heartContainer.style.display = 'none';
-                        document.querySelector('.instruction').style.display = 'none';
-                        document.querySelector('.game-title').style.display = 'none';
+                        // 1. Hide the game screen
+                        gameScreen.style.opacity = 0;
+                        setTimeout(() => {
+                            gameScreen.style.display = 'none';
+                        }, 500);
 
-                        // 2. Show the video container and play the video (unmuted)
+                        // 2. Show the full-screen video container and play the video (unmuted)
                         videoContainer.classList.add('show');
                         longVideo.muted = false;
                         longVideo.play().catch(e => console.log("Video autoplay blocked:", e));

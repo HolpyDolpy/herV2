@@ -77,12 +77,12 @@
 
         .input-group {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        input[type="text"] {
+        select {
             padding: 12px;
             border: none;
             border-radius: 8px;
@@ -90,9 +90,8 @@
             color: #333;
             font-size: 1.1rem;
             text-align: center;
-            width: 100%;
-            max-width: 300px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
         }
 
         button {
@@ -152,7 +151,25 @@
         <p class="question">What is the special day?</p>
         
         <div class="input-group">
-            <input type="text" id="dateInput" placeholder="e.g., December 18">
+            <select id="monthInput">
+                <option value="">Month</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <select id="dayInput">
+                <option value="">Day</option>
+                <!-- Days 1 to 31 will be populated by JavaScript -->
+            </select>
             <button onclick="checkDate()">Unlock</button>
         </div>
 
@@ -164,14 +181,24 @@
     </div>
 
     <script>
+        const dayInput = document.getElementById('dayInput');
+        
+        // Populate days 1-31
+        for (let i = 1; i <= 31; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            dayInput.appendChild(option);
+        }
+
         function checkDate() {
-            const input = document.getElementById('dateInput').value.trim().toLowerCase();
+            const month = document.getElementById('monthInput').value;
+            const day = document.getElementById('dayInput').value;
             const result = document.getElementById('result');
             const nextLink = document.getElementById('nextLink');
             
-            const correctDate = /december\s*18|18\s*december|18th/i;
-
-            if (correctDate.test(input)) {
+            // Correct date is December (12) 18
+            if (month === '12' && day === '18') {
                 result.textContent = "Correct! The path is open.";
                 result.style.color = "#4CAF50";
                 nextLink.style.display = 'block';
