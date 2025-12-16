@@ -237,12 +237,15 @@
 
         // Set up the video to transition to the message screen when it ends
         longVideo.onended = function() {
-            // Stop the music when the video ends
-            music.pause();
-            music.currentTime = 0;
-
-            // Hide the video container and show the message screen
+            // 1. Hide the video container
             videoContainer.style.display = 'none';
+
+            // 2. Start the music and loop it
+            music.volume = 0.5;
+            music.loop = true;
+            music.play().catch(e => console.log("Music autoplay blocked:", e));
+
+            // 3. Show the message screen
             messageScreen.style.display = 'flex';
             messageScreen.style.flexDirection = 'column';
             messageScreen.style.justifyContent = 'center';
@@ -274,10 +277,8 @@
                         longVideo.muted = false;
                         longVideo.play().catch(e => console.log("Video autoplay blocked:", e));
 
-                        // 3. Start the music
-                        music.volume = 0.5;
-                        music.loop = true;
-                        music.play().catch(e => console.log("Music autoplay blocked:", e));
+                        // Music will start on video end
+                        // Removed music start from here
                     }
                 }
             });
